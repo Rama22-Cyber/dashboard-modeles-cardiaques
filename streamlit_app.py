@@ -147,7 +147,16 @@ st.divider()
 # Section 2 : Entrainement et evaluation des modeles
 # ---------------------------------------------------------
 st.header("2. Entrainement et evaluation des modeles")
-st.caption("Chaque modele est entraine puis evalue independamment, comme dans le notebook.")
+
+MODEL_NAMES = [
+    "Regression Logistique",
+    "SVM",
+    "Random Forest",
+    "XGBoost",
+    "Random Forest Optimise",
+    "Voting Classifier",
+]
+st.markdown(" | ".join(f"`{name}`" for name in MODEL_NAMES))
 
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
@@ -215,10 +224,8 @@ def train_all_models(X_train, X_test, y_train, X_train_scaled, X_test_scaled):
 with st.spinner("Entrainement des modeles en cours (incluant GridSearchCV)..."):
     model_results = train_all_models(X_train, X_test, y_train, X_train_scaled, X_test_scaled)
 
-st.info(
-    f"Meilleurs parametres trouves pour le Random Forest optimise : "
-    f"{model_results['Random Forest Optimise']['best_params']}"
-)
+with st.expander("Voir les meilleurs parametres du Random Forest optimise (GridSearchCV)"):
+    st.write(model_results["Random Forest Optimise"]["best_params"])
 
 st.divider()
 
@@ -262,7 +269,7 @@ st.plotly_chart(fig_bar, use_container_width=True)
 
 with st.expander("Voir le classification_report detaille de chaque modele"):
     for name, res in model_results.items():
-        st.text(f"{name}")
+        st.text(f"--- {name} ---")
         st.text(classification_report(y_test, res["y_pred"]))
 
 st.divider()
